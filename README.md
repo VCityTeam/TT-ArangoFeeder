@@ -11,9 +11,15 @@ Build arangoDB collections from Aioli and OpenTheso data
 
 ```bash
 docker run -e ARANGO_RANDOM_ROOT_PASSWORD=1 -p 8529:8529 -v $(pwd)/Junnk:/var/lib/arangodb3 -d --name arango arangodb/arangodb
+docker logs arango | grep "GENERATED ROOT PASSWORD"
 ```
-Obtain the generated database password that stands at the first line of the `docker logs contained-d`.
-Edit the `dbaccess.js` and update the required elements.
+
+Retrieve the generated database password out of the previous command and
+edit the `dbaccess.js` in order to provide the required credentials
+(note: by default the `login` is `root`.
+
+The proceed with uploading content with
+
 ```bash
 npm i
 node PrepareDB.js
