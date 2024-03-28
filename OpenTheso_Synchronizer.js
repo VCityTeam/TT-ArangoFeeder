@@ -89,7 +89,7 @@ async function handleConceptScheme(key, value){
           // si oui, la collection du thesaurus existe, on l'utilisera pour insérer nos concepts
           if(names.includes(id)){
             console.log("the collection already exists");
-            resolve("miaou");
+            resolve("");
           }
           // si non, il faut la créer pour ensuite pouvoir insérer nos concepts
           else{
@@ -543,24 +543,3 @@ async function loadThesauriFiles(){
   console.log("Over");
 }
 loadThesauriFiles();
-
-
-// 0. Create server and listen
-var server = http.createServer(function (req, res) {
-
-    var url_parts = url.parse(req.url, true);
-    var name = url_parts.query.name;
-    if (name) {
-        console.log('Name: ' +name);
-        res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({message: 'Hello ' +name + '!'}));
-    } else {
-        console.log('No name!');
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        fs.readFile('index.html',function (err,data) {
-          res.end(data);
-        });
-    }
-
-}).listen(1337, '127.0.0.1');
-console.log('Server running at http://127.0.0.1:1337/');
