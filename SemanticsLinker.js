@@ -4,17 +4,16 @@ var url = require('url');
 var fs = require('fs');
 var arangojs = require('arangojs');
 var config = require('./config.js');
+var dbaccess = require('./dbaccess.js');
 
 // 1. Connect to the database and get the thesauri collection
 const db = arangojs({
-  url: config.dburl,
-  databaseName: config.database
+  url: dbaccess.dburl,
+  databaseName: dbaccess.database
 });
 
-db.useBasicAuth(config.user.login, config.user.pwd);
+db.useBasicAuth(dbaccess.login, dbaccess.pwd);
 
-//var db = new arangojs.Database('http://127.0.0.1:8529');
-//db.useDatabase('AioliMars2023');
 var semanticLinks = db.collection("SemanticLinks");
 var aioliObjects = db.collection("aioli_objects");
 var thesauri = db.collection("Thesauri");

@@ -1,12 +1,5 @@
 // Database
 var config = {
-  dburl: 'http://127.0.0.1:8529',
-  database: 'Teatime_16_01_2024',
-  user: {
-    login: "violette",
-    pwd: "Te@time2024"
-  },
-
   collections: {
     aioliObjects: {
       name: 'aioli_objects',
@@ -50,9 +43,5 @@ var config = {
     gray: '#575a5b'
   }
 }
-
-// var db = new arangojs.Database(dburl);
-// db.useDatabase(database);
-// let existingCollections = db._collections();
 
 module.exports = config;

@@ -4,14 +4,15 @@ var url = require('url');
 var fs = require('fs');
 var arangojs = require('arangojs');
 var config = require('./config.js');
+var dbaccess = require('./dbaccess.js');
 
 // 1. Connect to the database and get the thesauri collection
 const db = arangojs({
-  url: config.dburl,
-  databaseName: config.database
+  url: dbaccess.dburl,
+  databaseName: dbaccess.database
 });
 
-db.useBasicAuth(config.user.login, config.user.pwd);
+db.useBasicAuth(dbaccess.login, dbaccess.pwd);
 
 var thesauri = db.collection("Thesauri");
 

@@ -4,17 +4,18 @@ var url = require('url');
 var fs = require('fs');
 var arangojs = require('arangojs');
 var config = require('./config.js');
+var dbaccess = require('./dbaccess.js');
 
 // UNSAFE, VERY INSECURE (DIASBLE CERTIFICATE VERIFICATIONS !)
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 // 1. Connect to the database
 const db = arangojs({
-  url: config.dburl,
-  databaseName: config.database
+  url: dbaccess.dburl,
+  databaseName: dbaccess.database
 });
 
-db.useBasicAuth(config.user.login, config.user.pwd);
+db.useBasicAuth(dbaccess.login, dbaccess.pwd);
 
 var objects = db.collection("aioli_objects");
 var users = db.collection("aioli_users");

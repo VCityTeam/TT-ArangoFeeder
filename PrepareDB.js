@@ -3,15 +3,15 @@ var https = require('https');
 var url = require('url');
 var fs = require('fs');
 var arangojs = require('arangojs');
-//var aql = arangojs.aql;
 var config = require('./config.js');
+var dbaccess = require('./dbaccess.js');
 
 const db = arangojs({
-  url: config.dburl,
-  databaseName: config.database
+  url: dbaccess.dburl,
+  databaseName: dbaccess.database
 });
 
-db.useBasicAuth(config.user.login, config.user.pwd);
+db.useBasicAuth(dbaccess.login, dbaccess.pwd);
 
 async function prepareDB(){
   const collections = await db.listCollections();
