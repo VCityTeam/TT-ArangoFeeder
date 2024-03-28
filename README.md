@@ -19,9 +19,11 @@ edit the `dbaccess.js` in order to provide the required credentials
 (note: by default the `login` is `root`.
 
 Then create a database named out of the `database` entry you chose to provide
-within the `dbaccess.js` file by using the builtin Arangodb UI by opening
-`http://127.0.0.1:8529` with your favorite webbrowser, identifying and 
-using the `DATABASES` tab of the dashboard.
+within the `dbaccess.js` file by 
+* using the builtin Arangodb UI by opening `http://127.0.0.1:8529` with your
+  favorite webbrowser,
+* identifying and 
+* using the `DATABASES` tab of the dashboard.
 
 Eventually proceed with uploading content to the database by running
 
