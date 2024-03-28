@@ -1,0 +1,1066 @@
+{
+    "R1": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "47m6qdn61dz3zc6qb3r0"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "niveau",
+          "entity_crm": "crm:E53",
+          "entity_label": "niveau tribunes",
+          "entity_notation": "R1"
+      },
+      "RCC8": {
+          "DC": [],
+          "EC": [],
+          "PO": [],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "RDC": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "bs5sv9k62fs9vnvxxn27"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "niveau",
+          "entity_crm": "crm:E53",
+          "entity_label": "niveau rez-de-chaussée",
+          "entity_notation": "RDC"
+      },
+      "RCC8": {
+          "DC": [],
+          "EC": ["R1"],
+          "PO": [],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+
+      }
+    },
+    "F27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "r3v5rfjs5gxn9zpk48tj"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "file",
+          "entity_crm": "crm:E53",
+          "entity_label": "file 27",
+          "entity_notation": "F27"
+      },
+      "RCC8": {
+          "DC": [],
+          "EC": [],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "F28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "cfh29k3d21hhq2nf699g"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "file",
+          "entity_crm": "crm:E53",
+          "entity_label": "file 28",
+          "entity_notation": "F28"
+      },
+      "RCC8": {
+          "DC": ["F27"],
+          "EC": [],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "F29": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "27d59nbcnmkgvxknxc6h"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "file",
+          "entity_crm": "crm:E53",
+          "entity_label": "file 29",
+          "entity_notation": "F29"
+      },
+      "RCC8": {
+          "DC": ["F28"],
+          "EC": ["F27"],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "F30": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "v3s1h3c22b93przn4p28"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "file",
+          "entity_crm": "crm:E53",
+          "entity_label": "file 30",
+          "entity_notation": "F30"
+      },
+      "RCC8": {
+          "DC": ["F27"],
+          "EC": ["F28", "F29"],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "T27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "q95jtt7bjvs4ftdgcc6m"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "travée",
+          "entity_crm": "crm:E53",
+          "entity_label": "travée 27",
+          "entity_notation": "T27"
+      },
+      "RCC8": {
+          "DC": ["F28", "F30"],
+          "EC": [],
+          "PO": ["R1", "RDC", "F27", "F29"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "T28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "ctp5446xp18q8hrgxvtp"
+      },
+      "category": "Spatial indexing element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "travée",
+          "entity_crm": "crm:E53",
+          "entity_label": "travée 28",
+          "entity_notation": "T28"
+      },
+      "RCC8": {
+          "DC": ["F27", "F29"],
+          "EC": ["T27"],
+          "PO": ["R1", "RDC", "F28", "F30"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "CA27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "cv3c5d0pzg61800kjcm6"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "chapelle",
+          "entity_crm": "crm:E53",
+          "entity_label": "chapelle 27",
+          "entity_notation": "CA27"
+      },
+      "RCC8": {
+          "DC": ["F28", "F30", "T28", "NF", "CI", "TP", "CR", "CH", "RP"],
+          "EC": ["R1", "CE"],
+          "PO": ["F27", "F29"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC", "T27", "CA"]
+      },
+      "boundingbox": {
+      }
+    },
+    "CA28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "7pm3q0rw88fk8h3w187k"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "chapelle",
+          "entity_crm": "crm:E53",
+          "entity_label": "chapelle 28",
+          "entity_notation": "CA28"
+      },
+      "RCC8": {
+          "DC": ["F27", "F29", "T27", "NF", "CI", "TP", "CR", "CH", "RP", "CA27"],
+          "EC": ["R1", "CE"],
+          "PO": ["F28", "F30"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC", "T28", "CA"]
+      },
+      "boundingbox": {
+      }
+    },
+    "CE27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "fhcbz29b543dhbtv65q5"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "collatéral",
+          "entity_crm": "crm:E53",
+          "entity_label": "collatéral extérieur 27",
+          "entity_notation": "CE27"
+      },
+      "RCC8": {
+          "DC": ["F28", "F30", "T28", "NF", "TP", "CR", "CH", "RP", "CA28"],
+          "EC": ["R1", "CI", "CA", "CA27"],
+          "PO": ["F27", "F29"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC", "T27", "CE"]
+      },
+      "boundingbox": {
+      }
+    },
+    "CE28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "b2kgnr6x64d4rdcsvqmc"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "collatéral",
+          "entity_crm": "crm:E53",
+          "entity_label": "collatéral extérieur 28",
+          "entity_notation": "CE28"
+      },
+      "RCC8": {
+          "DC": ["F27", "F29", "T27", "NF", "TP", "CR", "CH", "RP", "CA27", "CE27"],
+          "EC": ["R1", "CI", "CA", "CA28"],
+          "PO": ["F28", "F30"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC", "T28", "CE"]
+      },
+      "boundingbox": {
+      }
+    },
+    "CI27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "n3stz6zd9q06vdwr7t38"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "collatéral",
+          "entity_crm": "crm:E53",
+          "entity_label": "collatéral intérieur 27",
+          "entity_notation": "CI27"
+      },
+      "RCC8": {
+          "DC": ["F28", "F30", "T28", "CA", "TP", "CR", "CH", "RP", "CA27", "CA28", "CE28"],
+          "EC": ["R1", "NF", "CE", "CE27"],
+          "PO": ["F27", "F29"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC", "T27", "CI"]
+      },
+      "boundingbox": {
+      }
+    },
+    "CI28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "gfztb2mrpps5cbd91nvm"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "collatéral",
+          "entity_crm": "crm:E53",
+          "entity_label": "collatéral intérieur 28",
+          "entity_notation": "CI28"
+      },
+      "RCC8": {
+          "DC": ["F27", "F29", "T27", "CA", "TP", "CR", "CH", "RP", "CA27", "CA28", "CE27", "CI27"],
+          "EC": ["R1", "NF", "CE", "CE28"],
+          "PO": ["F28", "F30"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC", "T28", "CI"]
+      },
+      "boundingbox": {
+      }
+    },
+    "NF25": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "s5z0697bd5z41kj4zg8q"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "nef",
+          "entity_crm": "crm:E53",
+          "entity_label": "nef 25"
+      },
+      "RCC8": {
+          "DC": ["F29", "F30", "CA27", "CA28", "CE27", "CE28", "CI28"],
+          "EC": ["F28", "T27", "T28", "CI27"],
+          "PO": ["R1", "RDC", "F27"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "NF27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "4r59q7stz47qzhrw322g"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "nef",
+          "entity_crm": "crm:E53",
+          "entity_label": "nef 27",
+          "entity_notation": "NF27"
+      },
+      "RCC8": {
+          "DC": ["CA27", "CA28", "CE27", "CE28", "CI28"],
+          "EC": ["F28", "F30", "T28", "CI27", "NF25"],
+          "PO": ["R1", "RDC", "F27", "F29"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["T27"]
+      },
+      "boundingbox": {
+      }
+    },
+    "NF26": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "hc0pphc6fnmcj2xxbkhj"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "nef",
+          "entity_crm": "crm:E53",
+          "entity_label": "nef 26",
+          "entity_notation": "NF26"
+      },
+      "RCC8": {
+          "DC": ["F29", "F30", "CA27", "CA28", "CE27", "CE28", "CI27"],
+          "EC": ["F27", "T27", "T28", "CI28", "NF25", "NF27"],
+          "PO": ["R1", "RDC", "F28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "NF28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "m82sk802r7w2cnxv8907"
+      },
+      "category": "Space",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "nef",
+          "entity_crm": "crm:E53",
+          "entity_label": "nef 28",
+          "entity_notation": "NF28"
+      },
+      "RCC8": {
+          "DC": ["F29", "CA27", "CA28", "CE27", "CE28", "CI27"],
+          "EC": ["F27", "T27", "CI28", "NF25", "NF27", "NF26"],
+          "PO": ["R1", "RDC", "F28", "F30"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["T28"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PE27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "gjqp01pqk0fc04z4nhsx"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile extérieure 27",
+          "entity_notation": "PE27"
+      },
+      "RCC8": {
+          "DC": ["F28", "F29", "F30", "T28", "CA27", "CA28", "CE28", "CI28", "NF25", "NF27", "NF26", "NF28"],
+          "EC": ["RDC"],
+          "PO": ["F27", "T27", "CE27", "CI27"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["R1"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PE28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "fgt1tt5xw0k33h5g84sc"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile extérieure 28",
+          "entity_notation": "PE28"
+      },
+      "RCC8": {
+          "DC": ["F27", "F29", "F30", "T27", "CA27", "CA28", "CE27", "CI27", "NF25", "NF27", "NF26", "NF28", "PE27"],
+          "EC": ["RDC"],
+          "PO": ["F28", "T28", "CE28", "CI28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["R1"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PE29": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "sb26723h514rjdj0v8sb"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile extérieure 29",
+          "entity_notation": "PE29"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "CA27", "CA28", "CE28", "CI28", "NF25", "NF27", "NF26", "NF28", "PE27", "PE28"],
+          "EC": ["RDC"],
+          "PO": ["CE27", "CI27"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["R1"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PE30": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "mf3z9ptwb9bkht0rxkhm"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile extérieure 30",
+          "entity_notation": "PE30"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "CA27", "CA28", "CE27", "CI27", "NF25", "NF27", "NF26", "NF28", "PE27", "PE28", "PE29"],
+          "EC": ["RDC"],
+          "PO": ["CE28", "CI28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["R1"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PI27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "15fnjd1t3f2ghrqg75h4"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile intérieure 27",
+          "entity_notation": "PI27"
+      },
+      "RCC8": {
+          "DC": ["R1", "F28", "F29", "F30", "T28", "CA27", "CA28", "CE27", "CE28", "CI28", "NF26", "NF28", "PE27", "PE28", "PE29", "PE30"],
+          "EC": [],
+          "PO": ["F27", "T27", "CI27", "NF25", "NF27"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PI28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "9mf65q8xxtvvj4tghkp2"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile intérieure 28",
+          "entity_notation": "PI28"
+      },
+      "RCC8": {
+          "DC": ["R1", "F27", "F29", "F30", "T27", "CA27", "CA28", "CE27", "CE28", "CI27", "NF25", "NF27", "PE27", "PE28", "PE29", "PE30", "PI28"],
+          "EC": [],
+          "PO": ["F28", "T28", "CI28", "NF26", "NF28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PI29": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "1zsw1gtxf7fq76td50x1"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile intérieure 29",
+          "entity_notation": "PI29"
+      },
+      "RCC8": {
+          "DC": ["R1", "F27", "F28", "F29", "F30", "T27", "T28", "CA27", "CA28", "CE27", "CE28", "CI28", "NF25", "NF26", "NF28", "PE27", "PE28", "PE29", "PE30", "PI27", "PI28"],
+          "EC": [],
+          "PO": ["CI27", "NF27"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC"]
+      },
+      "boundingbox": {
+      }
+    },
+    "PI30": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "g30mr78gtrwbr41f6j8x"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "pile",
+          "entity_crm": "crm:E22",
+          "entity_label": "pile intérieure 30",
+          "entity_notation": "PI30"
+      },
+      "RCC8": {
+          "DC": ["R1", "F27", "F28", "F29", "F30", "T27", "T28", "CA27", "CA28", "CE27", "CE28", "CI27", "NF25", "NF27", "NF26", "PE27", "PE28", "PE29", "PE30", "PI27", "PI28", "PI29"],
+          "EC": [],
+          "PO": ["CI28", "NF28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC"]
+      },
+      "boundingbox": {
+      }
+    },
+    "R27": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "4d8df1dbf8sphpmckwtn"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "refend",
+          "entity_crm": "crm:E22",
+          "entity_label": "refend 27",
+          "entity_notation": "R27"
+      },
+      "RCC8": {
+          "DC": ["F28", "F29", "F30", "T28", "CA28", "CE27", "CE28", "CI27", "CI28", "NF25", "NF27", "NF26", "NF28", "PE27", "PE28", "PE29", "PE30", "PI27", "PI28", "PI29", "PI30"],
+          "EC": [],
+          "PO": ["R1", "RDC", "F27", "T27", "CA27", "CE27"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "R28": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "v3qhmz3nhwgck4h13xnx"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "refend",
+          "entity_crm": "crm:E22",
+          "entity_label": "refend 28",
+          "entity_notation": "R28"
+      },
+      "RCC8": {
+          "DC": ["F27", "F29", "F30", "T27", "CA27", "CE27", "CI27", "CI28", "NF25", "NF27", "NF26", "NF28", "PE27", "PE28", "PE29", "PE30", "PI27", "PI28", "PI29", "PI30", "R27"],
+          "EC": [],
+          "PO": ["R1", "RDC", "F28", "T28", "CA28", "CE28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "R29": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "kkf7pzqtjwr43h0s4qd1"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "refend",
+          "entity_crm": "crm:E22",
+          "entity_label": "refend 29",
+          "entity_notation": "R29"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "CA28", "CI27", "CI28", "NF25", "NF27", "NF26", "NF28", "PE27", "PE28", "PE29", "PE30", "PI27", "PI28", "PI29", "PI30", "R27", "R28"],
+          "EC": [],
+          "PO": ["R1", "RDC", "CA27", "CE27", "CE28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "R30": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": "https://ark.notre-dame.science/ark:/35572/ndp",
+          "toponym_uri_slug": "ntt4wzt0mnxvn39spwwg"
+      },
+      "category": "Building element",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": "refend",
+          "entity_crm": "crm:E22",
+          "entity_label": "refend 30",
+          "entity_notation": "R30"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "CA27", "CE27", "CI27", "CI28", "NF25", "NF27", "NF26", "NF28", "PE27", "PE28", "PE29", "PE30", "PI27", "PI28", "PI29", "PI30", "R27", "R28", "R29"],
+          "EC": [],
+          "PO": ["R1", "RDC", "CA28", "CE28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "NF": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "nef",
+          "entity_notation": "NF"
+      },
+      "RCC8": {
+          "DC": [],
+          "EC": [],
+          "PO": ["R1", "RDC", "F27", "F28", "F29", "F30", "T27", "T28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "CI": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "collatéral intérieur",
+          "entity_notation": "CI"
+      },
+      "RCC8": {
+          "DC": [],
+          "EC": ["R1", "NF"],
+          "PO": ["F27", "F28", "F29", "F30", "T27", "T28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC"]
+      },
+      "boundingbox": {
+      }
+    },
+    "CE": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "collatéral extérieur",
+          "entity_notation": "CE"
+      },
+      "RCC8": {
+          "DC": ["NF"],
+          "EC": ["R1", "CI"],
+          "PO": ["F27", "F28", "F29", "F30", "T27", "T28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC"]
+      },
+      "boundingbox": {
+      }
+    },
+    "CA": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "chapelle",
+          "entity_notation": "CA"
+      },
+      "RCC8": {
+          "DC": ["NF", "CI"],
+          "EC": ["R1", "CE"],
+          "PO": ["F27", "F28", "F29", "F30", "T27", "T28"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": ["RDC"]
+      },
+      "boundingbox": {
+      }
+    },
+    "TP": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "transept",
+          "entity_notation": "TP"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "NF"],
+          "EC": ["CI", "CE", "CA"],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "CR": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "croisée",
+          "entity_notation": "CR"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "CI", "CE", "CA"],
+          "EC": ["NF", "TP"],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "CH": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "choeur",
+          "entity_notation": "CH"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "NF", "CI", "CE", "CA", "TP"],
+          "EC": ["CR"],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    },
+    "RP": {
+      "id": null,
+      "toponym": {
+          "toponym_uri_prefix": null,
+          "toponym_uri_slug": null
+      },
+      "category": "Perouserie",
+      "entity": {
+          "entitype_uri_prefix": null,
+          "entitype_uri_slug": null,
+          "entitype_tmp_label": null,
+          "entity_crm": "crm:E53",
+          "entity_label": "rond-point",
+          "entity_notation": "RP"
+      },
+      "RCC8": {
+          "DC": ["F27", "F28", "F29", "F30", "T27", "T28", "NF", "CI", "CE", "CA", "TP"],
+          "EC": ["CR", "CH"],
+          "PO": ["R1", "RDC"],
+          "EQ": [],
+          "TPP": [],
+          "TPPi": [],
+          "nTPP": [],
+          "nTPPi": []
+      },
+      "boundingbox": {
+      }
+    }
+}
