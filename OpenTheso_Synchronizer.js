@@ -35,6 +35,11 @@ async function handleConceptScheme(key, value){
     let url = key.split("/");
     let id = url[url.length-1];
 
+    // patch un peu dégueu
+    if(id.includes("=")){
+      id = id.split("=")[1];
+    }
+
     // on verifie d'abord si le DOCUMENT correspondant à ce theso existe déjà dans la liste des thesauri
     db.query(`RETURN DOCUMENT('Thesauri/${id}')`).then(
       cursor => cursor.all()
@@ -66,7 +71,7 @@ async function handleConceptScheme(key, value){
           // le document (fiche de ce thesaurus) n'existe pas;
           thesauri.save(doc).then(
             meta => console.log('Document saved:', meta._rev),
-            err => console.error('Failed to save document:', err)
+            err => console.error('Failed to save document (74):', err)
           )
         }
         else{
@@ -94,6 +99,7 @@ async function handleConceptScheme(key, value){
           // si non, il faut la créer pour ensuite pouvoir insérer nos concepts
           else{
             //db.collection(id).create().then(
+            console.log(id);
             db.createCollection(id).then(
               () => {
                 console.log('Node collection created');
@@ -119,6 +125,7 @@ async function handleCollections(key, value){
   const promise = new Promise ((resolve) => {
     // on recupère le nom abrégé du thesaurus
     let id = key.split("idg=")[1].split("&")[0];
+
     let idTheso = key.split("idt=")[1];
     // on verifie d'abord si le DOCUMENT correspondant à cette collection existe déjà dans le thesaurus
     db.query(`RETURN DOCUMENT('${idTheso}/${id}')`).then(
@@ -163,7 +170,7 @@ async function handleCollections(key, value){
               //console.log('Document saved:', meta._rev),
               resolve(id);
             },
-            err => console.error('Failed to save document:', err)
+            err => console.error('Failed to save document (173):', err)
           )
         }
         else{
@@ -207,6 +214,11 @@ async function handleConcepts(key, value){
   }
   else {
     idTheso = key.split("idt=")[1];
+  }
+
+  // patch un peu dégueu
+  if(idTheso.includes("=")){
+    idTheso = idTheso.split("=")[1];
   }
 
   let color = await getColorByTheso("th56");
@@ -304,7 +316,7 @@ async function handleConcepts(key, value){
               //console.log('Document saved:', meta._rev),
               resolve(id);
             },
-            err => console.error('Failed to save document:', err)
+            err => console.error('Failed to save document (314):', err)
           )
         }
         else{
@@ -513,9 +525,8 @@ function getColorByTheso (idTheso){
 }
 
 async function loadThesauriFiles(){
-  //const listTheso = ["th18", "th52", "th53", "th55"];
-  //const listTheso = ["th13", "th18", "th52", "th53", "th56"];
-  const listTheso = ["th56"];
+  //const listTheso = ["th13", "th15", "th16", "th56", "th57", "th58"];
+  const listTheso = ["th18"];
 
   // let arg = await test();
   // console.log(arg[0]);

@@ -19,7 +19,7 @@ var aioliObjects = db.collection("aioli_objects");
 var thesauri = db.collection("Thesauri");
 
 // pour specifier les thesauri qui nous intéressent
-var interestingThesauri = ["th56"];
+var interestingThesauri = ["th13", "th15", "th16", "th56", "th57", "th58"] //["th56"];
 //var interestingThesauri = ["th13", "th18", "th52", "th53", "th56", "th12", "th21"];
 
 // on créé un tableau qui va regrouper tous les termes de vocabulaire possible
