@@ -46,6 +46,7 @@ async function loadAllThesauri(thesauri){
     let theso = await cursor.all();
     thCollecs.push(theso);
     if(k == thNames.length - 1){
+    //if(k == 2){ // pour des tests rapides
       next(thCollecs);
     }
   }
@@ -80,37 +81,51 @@ async function next(thCollecs){
 
   let conceptNames = flatten.map(c => c.name);
   const inclusions = flatten.map((item, i) => {
-    let includedIn = flatten.filter((c, index) => {
+    //let includedIn = flatten.filter((c, index) => {
+    let includedIn = flatten.map((c, index) => {
 
-      let nameA = item.name.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, '');
-      let nameB = c.name.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, '');
+      let nameA = item.name.replace(/[&\/\\#,+()$~%.:*?<>{}\[\]]/g, '');
+      let nameB = c.name.replace(/[&\/\\#,+()$~%.:*?<>{}\[\]]/g, '');
 
+      //console.log(nameA + " VS " + nameB);
       let regA = new RegExp('\\b' + nameA + '\\b');
       let regB = new RegExp('\\b' + nameB + '\\b');
 
       let found_AinB = regA.test(nameB); // false
-      if(found_AinB && conceptNames.indexOf(c.name) !== i && nameA.length > 3 && nameB.length > 3){
+
+      if(found_AinB == true && conceptNames.indexOf(c.name) !== i && nameA.length > 3 && nameB.length > 3){
+        //console.log(item.name + " FOUND IN " + c.name + "    " + found_AinB);
         return c._id
       }
-    });
+      else {
+        return null
+      }
 
+    });
+    //console.log(includedIn)
     return [item._id, includedIn];
   });
-  const notnull = inclusions.filter(n => n[1].length > 0);
-  const j = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances._id, type: 'related to', provenance: 'internal calculation'}))).flat();
-  console.log(j);
+
+  //const notnull = inclusions.filter(n => n[1].length > 0);
+  const notnull = inclusions.map(z => ([z[0],z[1].filter(n => n !== null)]));
+  //console.log(notnull);
+  //const relations = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances._id, type: 'related to', provenance: 'internal calculation'}))).flat();
+  const relations = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances, type: 'related to', provenance: 'internal calculation'}))).flat();
+  console.log(relations);
 
   const result = db.query({
     query: `
     FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
     `,
     bindVars: {
-      toInsert: j,
+      toInsert: relations,
     }
   }).then(
     cursor => cursor.all()
   ).then(
     res => console.log(res));
+
+
 
   // const cursor = await db.query(aql`FOR entry IN ${j} INSERT entry INTO intraTheso_relations RETURN 1`);
   // const result = await cursor.all();
