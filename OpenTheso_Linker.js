@@ -52,7 +52,7 @@ async function loadAllThesauri(thesauri){
 
 }
 
-function next(thCollecs){
+async function next(thCollecs){
   let flatten = thCollecs.flat();
   let totallength = flatten.length;
   console.log(totallength);
@@ -69,33 +69,16 @@ function next(thCollecs){
   });
   */
 
+  //var miaou = [{ _from: 'th57/ndp5g4fxtwttkqst2zr60w4', _to: 'th18/27323', type: 'related to', provenance: 'internal calculation'}, { _from: 'th57/ndp5g4fxtwttkqst2zr60w4', _to: 'th18/27324', type: 'related to',provenance: 'internal calculation' },{ _from: 'th57/ndp5g4fxtwttkqst2zr60w4', _to: 'th18/27327', type: 'related to', provenance: 'internal calculation'}]
+
+
+  // stmt = db._createStatement({query: "for i in @list return i"});
+  // stmt.bind('list', miaou);
+
   // INCLUSION
   // FONCTIONNE !!
+
   let conceptNames = flatten.map(c => c.name);
-
-  // expected = chapelle IN la chapelle dans la nef sud ; nef IN la chapelle dans la nef sud
-  //let conceptNames = ["chapelle", "transept", "la chapelle dans la nef sud", "choeur", "nef", "nefs", "croisée"];
-  /*
-  const inclusions = conceptNames.map((item, i) => {
-    let includedIn = conceptNames.filter((c, index) => {
-
-      let nameA = item.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, '');
-      let nameB = c.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, '');
-
-      let regA = new RegExp('\\b' + nameA + '\\b');
-      let regB = new RegExp('\\b' + nameB + '\\b');
-
-      let found_AinB = regA.test(nameB); // false
-      if(found_AinB && conceptNames.indexOf(c) !== i){
-        return c
-      }
-    });
-
-    return [item, includedIn];
-  });
-  console.log(inclusions);
-  */
-
   const inclusions = flatten.map((item, i) => {
     let includedIn = flatten.filter((c, index) => {
 
@@ -106,23 +89,44 @@ function next(thCollecs){
       let regB = new RegExp('\\b' + nameB + '\\b');
 
       let found_AinB = regA.test(nameB); // false
-      if(found_AinB && conceptNames.indexOf(c.name) !== i){
+      if(found_AinB && conceptNames.indexOf(c.name) !== i && nameA.length > 3 && nameB.length > 3){
         return c._id
       }
     });
 
     return [item._id, includedIn];
   });
+  const notnull = inclusions.filter(n => n[1].length > 0);
+  const j = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances._id, type: 'related to', provenance: 'internal calculation'}))).flat();
+  console.log(j);
 
-  let notnull = inclusions.filter(n => n[1].length > 0);
+  const result = db.query({
+    query: `
+    FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
+    `,
+    bindVars: {
+      toInsert: j,
+    }
+  }).then(
+    cursor => cursor.all()
+  ).then(
+    res => console.log(res));
 
-  let test = notnull.map(inc => {
-    inc[1].forEach(container => {
-      return {_from: inc[0], _to: container._id, type: 'related to', provenance: 'internal calculation'}
-    })
-  }).flat();
-  console.log(test[0]);
-  //console.log(notnull[0]);
+  // const cursor = await db.query(aql`FOR entry IN ${j} INSERT entry INTO intraTheso_relations RETURN 1`);
+  // const result = await cursor.all();
+
+  // const result = db.query({
+  //   query: `
+  //   FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
+  //   `,
+  //   bindVars: {
+  //     "@toInsert": j,
+  //   }
+  // }).then(
+  //   cursor => cursor.all()
+  // ).then(
+  //   res => console.log(res));
+
 
 
 
