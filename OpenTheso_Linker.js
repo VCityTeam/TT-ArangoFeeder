@@ -7,6 +7,7 @@ var arangojs = require('arangojs');
 var aql = require('arangojs').aql;
 var config = require('./config.js');
 var dbaccess = require('./dbaccess.js');
+var natural = require('natural');
 
 // 1. Connect to the database and get the thesauri collection
 const db = arangojs({
@@ -26,7 +27,6 @@ let listThesauri = thesauri.all().then(
   cursor => cursor.all()
 ).then(
   res => {
-    //tmp(res); //linkAllThesauri
     loadAllThesauri(res);
 
   }
@@ -39,21 +39,23 @@ async function loadAllThesauri(thesauri){
   // array avec le nom des thesauri disponible dans ma BDD
   let thNames = thesauri.map(t => t._key);
 
-  //thNames.forEach((name) => { thCollecs[name] = db.collection(name)});
   let thCollecs = [];
   for (let k=0; k<thNames.length; k++){
     let cursor = await db.collection(thNames[k]).all();
     let theso = await cursor.all();
     thCollecs.push(theso);
     if(k == thNames.length - 1){
-    //if(k == 2){ // pour des tests rapides
-      next(thCollecs);
+     //testInclusions(thCollecs);
+     testHomonymes(thCollecs);
     }
+    // if(k == 2){ // pour des tests rapides
+    //   testHomonymes(thCollecs);
+    // }
   }
 
 }
 
-async function next(thCollecs){
+async function testInclusions(thCollecs){
   let flatten = thCollecs.flat();
   let totallength = flatten.length;
   console.log(totallength);
@@ -70,31 +72,22 @@ async function next(thCollecs){
   });
   */
 
-  //var miaou = [{ _from: 'th57/ndp5g4fxtwttkqst2zr60w4', _to: 'th18/27323', type: 'related to', provenance: 'internal calculation'}, { _from: 'th57/ndp5g4fxtwttkqst2zr60w4', _to: 'th18/27324', type: 'related to',provenance: 'internal calculation' },{ _from: 'th57/ndp5g4fxtwttkqst2zr60w4', _to: 'th18/27327', type: 'related to', provenance: 'internal calculation'}]
-
-
-  // stmt = db._createStatement({query: "for i in @list return i"});
-  // stmt.bind('list', miaou);
 
   // INCLUSION
   // FONCTIONNE !!
-
   let conceptNames = flatten.map(c => c.name);
   const inclusions = flatten.map((item, i) => {
-    //let includedIn = flatten.filter((c, index) => {
     let includedIn = flatten.map((c, index) => {
 
       let nameA = item.name.replace(/[&\/\\#,+()$~%.:*?<>{}\[\]]/g, '');
       let nameB = c.name.replace(/[&\/\\#,+()$~%.:*?<>{}\[\]]/g, '');
 
-      //console.log(nameA + " VS " + nameB);
       let regA = new RegExp('\\b' + nameA + '\\b');
       let regB = new RegExp('\\b' + nameB + '\\b');
 
-      let found_AinB = regA.test(nameB); // false
+      let found_AinB = regA.test(nameB);
 
       if(found_AinB == true && conceptNames.indexOf(c.name) !== i && nameA.length > 3 && nameB.length > 3){
-        //console.log(item.name + " FOUND IN " + c.name + "    " + found_AinB);
         return c._id
       }
       else {
@@ -102,14 +95,10 @@ async function next(thCollecs){
       }
 
     });
-    //console.log(includedIn)
     return [item._id, includedIn];
   });
 
-  //const notnull = inclusions.filter(n => n[1].length > 0);
   const notnull = inclusions.map(z => ([z[0],z[1].filter(n => n !== null)]));
-  //console.log(notnull);
-  //const relations = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances._id, type: 'related to', provenance: 'internal calculation'}))).flat();
   const relations = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances, type: 'related to', provenance: 'internal calculation'}))).flat();
   console.log(relations);
 
@@ -125,79 +114,35 @@ async function next(thCollecs){
   ).then(
     res => console.log(res));
 
-
-
-  // const cursor = await db.query(aql`FOR entry IN ${j} INSERT entry INTO intraTheso_relations RETURN 1`);
-  // const result = await cursor.all();
-
-  // const result = db.query({
-  //   query: `
-  //   FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
-  //   `,
-  //   bindVars: {
-  //     "@toInsert": j,
-  //   }
-  // }).then(
-  //   cursor => cursor.all()
-  // ).then(
-  //   res => console.log(res));
-
-
-
-
-
 }
 
-async function tmp(thesauri){
-  let thCollecs = [];
+async function testHomonymes(thCollecs){
+  let allConcepts = thCollecs.flat();
+  let totallength = allConcepts.length;
+  console.log(totallength);
 
-  // array avec le nom des thesauri disponible dans ma BDD
-  let thNames = thesauri.map(t => t._key);
-  thNames.forEach((name) => { thCollecs[name] = db.collection(name)});
+  // HOMONYMIE SUR LE MAIN LABEL
+  let conceptNames = allConcepts.map(c => c.name);
+  const duplicates = conceptNames.filter((item, index) => conceptNames.indexOf(item) !== index);
+  const indexOfAll = (arr, val) => arr.reduce((acc, el, i) => (el === val ? [...acc, i] : acc), []);
+  // duplicates.forEach(item => {
+  //   const duplicatesIndexes = indexOfAll(conceptNames, item).map(h => allConcepts[h]);
+  //   console.log(item, duplicatesIndexes);
+  // });
+  const duplicatesIndexes = duplicates.map(item => getPairs(indexOfAll(conceptNames, item).map(h => allConcepts[h]._id)).map(pair => ({_from: pair[0], _to: pair[1], type: "homonym", provenance: "internal calculation"})));
+  const relations = duplicatesIndexes.flat();
 
-  let pairs = getPairs(thNames);
+  const result = db.query({
+    query: `
+    FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
+    `,
+    bindVars: {
+      toInsert: relations,
+    }
+  }).then(
+    cursor => cursor.all()
+  ).then(
+    res => console.log(res));
 
-  for (let k=0; k<pairs.length; k++){
-    let pair = pairs[k];
-    const collecA = thCollecs[pair[0]];
-    const collecB = thCollecs[pair[1]];
 
-    const cursor = await db.query(aql`
-      FOR a IN ${collecA}
-        FOR b IN ${collecB}
-          RETURN {
-            first: a,
-            second: b,
-            }
-      `);
-    const result = await cursor.all();
-
-    result.forEach((item, i) => {
-      if(i == result.length){
-        console.log (" LAAAAAAAAAASSSTTTTT ");
-      }
-      let nameA = item.first.name.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, '');
-      let nameB = item.second.name.replace(/[&\/\\#,+()$~%.:*?<>{}]/g, '');
-      console.log(nameA, nameB);
-
-      let regA = new RegExp('\\b' + nameA + '\\b');
-      let regB = new RegExp('\\b' + nameB + '\\b');
-
-      let found_AinB = regA.test(nameB); // false
-      let found_BinA = regB.test(nameA); // false
-
-      let toSave = [];
-
-      if(found_AinB && nameA.length > 3 && nameB.length > 3){
-        console.log(nameA + " inside " + nameB + " ? " + found_AinB);
-        //toSave.push({_from: `${item.first._id}`, _to: `${item.second._id}`, type: 'related to', provenance: 'internal calculation'});
-      }
-
-      if(found_BinA && nameA.length > 3 && nameB.length > 3){
-        console.log(nameB + " inside " + nameA + " ? " + found_BinA);
-        //toSave.push({_from: `${item.second._id}`, _to: `${item.first._id}`, type: 'related to', provenance: 'internal calculation'});
-      }
-    });
-
-  }
 }

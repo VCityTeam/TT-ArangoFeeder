@@ -402,6 +402,20 @@ async function handleRelations(key, value){
       related = value["http://www.w3.org/2004/02/skos/core#related"].map(val => splitStringID(val["value"]));
     }
 
+    // VIOLETTE : NON TESTE, VERIFIER SI OK
+    let exactMatchs = [];
+    if(value["http://www.w3.org/2004/02/skos/core#exactMatch"]){
+      // on récupère l'ID des exactMatchs. A voir à l'usage si ça pose un pb ou si les id sont bien toujours sous cette forme
+      exactMatchs = value["http://www.w3.org/2004/02/skos/core#exactMatch"].map(val => splitStringID(val["value"]));
+    }
+
+    // VIOLETTE : NON TESTE, VERIFIER SI OK
+    let closeMatchs = [];
+    if(value["http://www.w3.org/2004/02/skos/core#closeMatch"]){
+      // on récupère l'ID des closeMatchs. A voir à l'usage si ça pose un pb ou si les id sont bien toujours sous cette forme
+      closeMatchs = value["http://www.w3.org/2004/02/skos/core#closeMatch"].map(val => splitStringID(val["value"]));
+    }
+
     // TODO, verifier avant si la collection existe ?
     let thRelations = db.collection(`${idTheso}_relations`);
 
@@ -445,6 +459,22 @@ async function handleRelations(key, value){
     //RELATED
     for (var l=0; l<related.length; l++){
       thRelations.save({_from: `${idTheso}/${id}`, _to: `${idTheso}/${related[l]}`, type: 'related'}).then(
+        meta => console.log(meta),
+        err => console.error('Failed: ', err)
+      );
+    }
+
+    //EXACTMATCHS
+    for (var m=0; m<exactMatchs.length; m++){
+      thRelations.save({_from: `${idTheso}/${id}`, _to: `${idTheso}/${exactMatchs[m]}`, type: 'exactMatch'}).then(
+        meta => console.log(meta),
+        err => console.error('Failed: ', err)
+      );
+    }
+
+    //CLOSEMATCHS
+    for (var c=0; c<closeMatchs.length; c++){
+      thRelations.save({_from: `${idTheso}/${id}`, _to: `${idTheso}/${exactMatchs[c]}`, type: 'closeMatch'}).then(
         meta => console.log(meta),
         err => console.error('Failed: ', err)
       );
