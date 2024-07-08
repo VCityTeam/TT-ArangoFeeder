@@ -20,6 +20,10 @@ var config = {
     semanticLinks: {
       name: 'SemanticLinks',
       type: 'edge'
+    },
+    intraThesoRelations: {
+      name: 'intraTheso_relations',
+      type: 'edge'
     }
   },
 
