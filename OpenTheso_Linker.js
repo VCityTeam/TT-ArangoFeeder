@@ -8,6 +8,8 @@ var aql = require('arangojs').aql;
 var config = require('./config.js');
 var dbaccess = require('./dbaccess.js');
 var natural = require('natural');
+const stopwords = require('natural/lib/natural/util/stopwords_fr');
+
 
 // 1. Connect to the database and get the thesauri collection
 const db = arangojs({
@@ -44,13 +46,13 @@ async function loadAllThesauri(thesauri){
     let cursor = await db.collection(thNames[k]).all();
     let theso = await cursor.all();
     thCollecs.push(theso);
-    if(k == thNames.length - 1){
-     //testInclusions(thCollecs);
-     testHomonymes(thCollecs);
-    }
-    // if(k == 2){ // pour des tests rapides
-    //   testHomonymes(thCollecs);
+    // if(k == thNames.length - 1){
+    //  //testInclusions(thCollecs);
+    //  testHomonymes(thCollecs);
     // }
+    if(k == 2){ // pour des tests rapides
+      testAiolidescriptions(thCollecs);
+    }
   }
 
 }
@@ -145,4 +147,101 @@ async function testHomonymes(thCollecs){
     res => console.log(res));
 
 
+}
+
+async function testAiolidescriptions(thCollecs){
+  let allConcepts = thCollecs.flat();
+  let conceptNames = allConcepts.map(c => c.name);
+
+  var nounInflector = new natural.NounInflector();
+  var tokenizer = new natural.AggressiveTokenizerFr();
+
+  // on tokenise chaque concept, on supprime les stopwords (de, et, la, ...), on singularise et ensuite en reconstruit la string
+  // on fera subir le meme traitement aux descriptions aioli et ensuite on pourra comparer
+  let stemmedConceptNames = conceptNames.map(c => {
+    let tokenized = tokenizer.tokenize(c);
+    let result = tokenized.filter(token =>
+      stopwords.words.indexOf(token) === -1
+    );
+    let sing = result.map(token => nounInflector.singularize(token));
+    let finalString = sing.join(" ");
+    return finalString;
+  });
+  console.log(stemmedConceptNames);
+
+  var aioliObjects = db.collection("aioli_objects");
+  let listAioliObjects = aioliObjects.all().then(
+    cursor => cursor.all()
+  ).then(
+    res => {
+      let regions = res.filter(doc => doc.type == "Region" && Object.keys(doc.description).length > 0)
+      //console.log(regions);
+
+      let descriptions = regions.map(reg => ({[reg._id]: reg.description}));
+
+      //Object.values(d
+      let descriptionStrings = descriptions.map(d => ({[Object.keys(d)[0]]: JSON.stringify(Object.values(d))}) );
+      //console.log(descriptionStrings);
+
+      let cleanedDescriptions = descriptionStrings.map(item => {
+      //descriptionStrings.forEach(item => {
+        // let val = Object.values(item);
+        // console.log(val);
+        for (const [key, value] of Object.entries(item)) {
+          //console.log(value);
+
+          let tokenized = tokenizer.tokenize(value);
+          let result = tokenized.filter(token =>
+            stopwords.words.indexOf(token) === -1
+          );
+          let sing = result.map(token => nounInflector.singularize(token));
+          let finalString = sing.join(" ");
+          //console.log(result);
+          // console.log(finalString);
+          return ({[key]: finalString})
+        }
+      })
+
+      //console.log(cleanedDescriptions);
+
+
+      stemmedConceptNames.forEach((concept, i) => {
+
+        let tmp = cleanedDescriptions.filter(d => Object.values(d)[0].indexOf(concept) > -1 ).map(match => {
+          console.log(conceptNames[i] + " FOUND IN " + Object.values(match)[0] + "\n");
+          let relation = {_from: allConcepts[i]._id, _to: Object.keys(match)[0], provenance: "internal calculation"};
+          return relation;
+        })
+        console.log(tmp);
+
+        // let tmp = cleanedDescriptions.filter(d => {Object.values(d).indexOf(concept) > -1}).map(match => {
+        //   console.log(concept + " FOUND IN " + match);
+        //   return match;
+        // })
+      });
+
+
+
+
+      // let test = descriptions[200];
+      // //let val = Object.values(test[0]);
+      // console.log(Object.values(Object.values(test)[0]));
+      //
+      // let input = Object.values(Object.values(test)[0]).toString();
+      //
+      // var tokenizer = new natural.AggressiveTokenizerFr();
+      // let tokenized = tokenizer.tokenize(input);
+      // let result = tokenized.filter(token =>
+      //   stopwords.words.indexOf(token) === -1
+      // );
+      // var nounInflector = new natural.NounInflector();
+      // let sing = result.map(token => nounInflector.singularize(token));
+      // let finalString = sing.join(" ");
+      // console.log(result);
+      // console.log(sing);
+
+      //console.log(test);
+      // let test = descriptions.forEach(desc => console.log(Object.entries(desc)))
+    }
+  )
 }
