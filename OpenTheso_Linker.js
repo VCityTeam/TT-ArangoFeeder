@@ -30,7 +30,6 @@ let listThesauri = thesauri.all().then(
 ).then(
   res => {
     loadAllThesauri(res);
-
   }
 )
 
@@ -46,13 +45,14 @@ async function loadAllThesauri(thesauri){
     let cursor = await db.collection(thNames[k]).all();
     let theso = await cursor.all();
     thCollecs.push(theso);
-    // if(k == thNames.length - 1){
-    //  //testInclusions(thCollecs);
-    //  testHomonymes(thCollecs);
-    // }
-    if(k == 2){ // pour des tests rapides
-      testAiolidescriptions(thCollecs);
+    if(k == thNames.length - 1){
+     //testInclusions(thCollecs);
+     //testHomonymes(thCollecs);
+     testAiolidescriptions(thCollecs);
     }
+    // if(k == 2){ // pour des tests rapides
+    //   testAiolidescriptions(thCollecs);
+    // }
   }
 
 }
@@ -205,23 +205,43 @@ async function testAiolidescriptions(thCollecs){
       //console.log(cleanedDescriptions);
 
 
-      stemmedConceptNames.forEach((concept, i) => {
+      // stemmedConceptNames.forEach((concept, i) => {
+      //   let tmp = cleanedDescriptions.filter(d => Object.values(d)[0].indexOf(concept) > -1 ).map(match => {
+      //     console.log(conceptNames[i] + " FOUND IN " + Object.values(match)[0] + "\n");
+      //     let relation = {_from: allConcepts[i]._id, _to: Object.keys(match)[0], provenance: "internal calculation"};
+      //     return relation;
+      //   })
+      //   console.log(tmp);
+      // });
 
-        let tmp = cleanedDescriptions.filter(d => Object.values(d)[0].indexOf(concept) > -1 ).map(match => {
+      let matches = stemmedConceptNames.map((concept, i) => {
+        let tmp = cleanedDescriptions.filter(d => Object.values(d)[0].indexOf(" " + concept + " ") > -1 && isNaN(concept) == true && concept.length > 2).map(match => {
           console.log(conceptNames[i] + " FOUND IN " + Object.values(match)[0] + "\n");
-          let relation = {_from: allConcepts[i]._id, _to: Object.keys(match)[0], provenance: "internal calculation"};
+          let ambiguities = ["cours", "cadre", "niveau", "place"];
+          let ambiguity = false;
+          if(ambiguities.indexOf(allConcepts[i].name) > -1){
+            ambiguity = true; // undefined, weak, medium, strong ?
+          }
+          let relation = {_from: allConcepts[i]._id, _to: Object.keys(match)[0], type: "vocabulary", provenance: {method: "internal calculation", timestamp: Date.now(), script: "SemanticLinker", function: "testAiolidescriptions", ambiguity: true}};
           return relation;
         })
-        console.log(tmp);
-
-        // let tmp = cleanedDescriptions.filter(d => {Object.values(d).indexOf(concept) > -1}).map(match => {
-        //   console.log(concept + " FOUND IN " + match);
-        //   return match;
-        // })
+        return tmp;
       });
 
+      let relations = matches.filter(entry => entry.length > 0).flat();
+      console.log(relations);
 
-
+      const result = db.query({
+        query: `
+        FOR entry IN @toInsert INSERT entry INTO SemanticLinks RETURN 1
+        `,
+        bindVars: {
+          toInsert: relations,
+        }
+      }).then(
+        cursor => cursor.all()
+      ).then(
+        res => console.log(res));
 
       // let test = descriptions[200];
       // //let val = Object.values(test[0]);

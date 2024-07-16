@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "arangojs": "^8.6.0"
+    "arangojs": "^8.6.0",
+    "natural": "^7.1.0"
   }
 }
