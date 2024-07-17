@@ -1,169 +1,299 @@
-var http = require('http');
-var https = require('https');
-var url = require('url');
-var fs = require('fs');
-var arangojs = require('arangojs');
-var config = require('./config.js');
-var dbaccess = require('./dbaccess.js');
+const url = require('url');
+const fs = require('fs');
+const arangojs = require('arangojs');
+const aql = require('arangojs').aql;
+const config = require('./config.js');
+const dbaccess = require('./dbaccess.js');
+const natural = require('natural');
+const stopwords = require('natural/lib/natural/util/stopwords_fr');
+const commandLineArgs = require('command-line-args');
+const commandLineUsage = require('command-line-usage')
 
 // 1. Connect to the database and get the thesauri collection
 const db = arangojs({
   url: dbaccess.dburl,
   databaseName: dbaccess.database
 });
-
 db.useBasicAuth(dbaccess.login, dbaccess.pwd);
 
-var semanticLinks = db.collection("SemanticLinks");
-var aioliObjects = db.collection("aioli_objects");
-var thesauri = db.collection("Thesauri");
+// 2. we use command line args to allow user to specify wich test(s) he wants to perform (default : none)
+// To do : add an argument to specify the list of thesauri to be tested (for now: all of them are tested)
+const optionDefinitions = [
+  {
+    name: "help",
+    alias: "h",
+    type: Boolean,
+    description: "Display this usage guide."
+  },
+  {
+    name: 'inclusions',
+    type: Boolean,
+    description: 'Whether or not we have to perform the inclusion test (try to find relation like "A included in B", e.g. "chapelle" included in "chapelles de la nef"). Default: false'
+  },
+  {
+    name: 'homonyms',
+    type: Boolean,
+    description: 'Whether or not we have to perform the homonymy test. Defaut: false'
+  },
+  {
+    name: 'aioli',
+    type: Boolean,
+    description: 'Whether or not we have to perform the inclusion test with aioli annotations(try to find thesaurus terms inside aioli annotations descriptions. Performed with NLP, can be subject to lexical ambiguities. Default: false'
+  },
+  {
+    name: 'thesauri',
+    multiple: true,
+    description: 'Provide a list of thesauri to be tested (default: all). NOTE: Not yet operational !'
+  }
+]
+const options = commandLineArgs(optionDefinitions);
+const usage = commandLineUsage([
+  {
+    header: 'An app to build semantic relations between concepts and/or annotations and save them in a graph with ArangoDB.',
+    content: 'This app aims to look for semantic relations between concepts from thesauri, and/or semantic annotations from Aioli. Pre-requisite : the database must have be filled before using {italic OpenTheso_Synchronizer.js} and {italic Aioli_Synchronizer.js}. For now, all the concepts from all thesauri are tested. We will later add an option to specify which specific thesauri need to be tested.'
+  },
+  {
+    header: 'Options',
+    optionList: optionDefinitions
+  },
+  {
+    content: 'Project home: {underline https://github.com/VCityTeam/TT-ArangoFeeder}'
+  }
+]);
 
-// pour specifier les thesauri qui nous intéressent
-var interestingThesauri = ["th13", "th15", "th16", "th56", "th57", "th58"] //["th56"];
-//var interestingThesauri = ["th13", "th18", "th52", "th53", "th56", "th12", "th21"];
-
-// on créé un tableau qui va regrouper tous les termes de vocabulaire possible
-// il sera de la forme terms[] = [[th, key1, voc1], [th, key2, voc2], ...]
-var terms = [];
-
-// d'abord on liste les thesauri disponibles
-thesauri.all().then(
-  cursor => cursor.map(doc => doc._key)
-).then(
-  // ensuite pour chaque theso on va créer un sous-tableau
-  th => handleThesauri(th),
-  err => console.error('Failed to fetch all documents:', err)
-);
-
-// pour chaque theso, on va aller chercher la collection correspondante dans la BDD pour récupérer ses élements de vocabulaire
-function handleThesauri(th){
-  th.forEach((item, index) => {
-
-    // pour ne chercher des liens qu'avec les thesauri qu'on autorise
-    // if(interestingThesauri.indexOf(item) < 0){
-    //   console.log(item + " not found in authorized thesauri");
-    //   return;
-    // }
-    console.log(item + " is in authorized thesauri");
-
-    let t = db.collection(item);
-
-    t.all().then(
-      cursor => cursor.map(doc => [item, doc._key, doc.mainName])
-    ).then(
-      //names => pushTerms(names), //item, names
-      names => {
-        if(interestingThesauri.indexOf(item) > -1){
-          pushTerms(names)
-        }
-      },
-      err => console.error('Failed to fetch all documents:', err)
-    ).then(
-      // c'est le dernier theso, donc maintenant qu'on a accumulé tout le vocabulaire
-      // on va pouvoir chercher des liens avec les projets aioli
-      v => {
-        if(index == th.length - 1){
-          console.log(item + " is last !");
-          console.log(terms)
-
-          findSemanticsInRegions();
-          /*findSemanticsInProjectsNames();*/
-
-        }
-      }
-    )
-
-  });
+// if no arg, display usage guide (by default, are test (multithesaurus inclusion, homonymy, thesauri/aioli inclusion) are set on false)
+if(options.help || (!options.inclusions && !options.homonyms && !options.aioli)){
+  console.log(usage);
 }
+else{
+  let toTest = {
+    inclusions: options.inclusions ? true : false,
+    homonyms: options.homonyms ? true : false,
+    aioli: options.aioli ? true : false
+  }
+  console.log(toTest);
 
-// cette fonction permet juste d'ajouter un terme dans le sous tableau correspondant au bon thesaurus
-function pushTerms(term){
-  term.forEach(voc => {
-    terms.push(voc);
-  })
-}
+  var thesauri = db.collection("Thesauri");
 
-
-
-function findSemanticsInRegions(){
-  db.query('FOR d IN aioli_objects FILTER d.type == "Region" AND d.description RETURN d').then(
+  // dans tous les cas on doit recuperer la liste des thesauri disponibles
+  let listThesauri = thesauri.all().then(
     cursor => cursor.all()
   ).then(
-    docs => linkRegDescriptions(docs),
-    err => console.error('Failed to execute query:', err)
-  );
+    res => {
+      if(!options.thesauri || options.thesauri.length == 0){
+        // array with all the names of available thesauri in the database
+        let thNames = res.map(t => t._key);
+        loadAllThesauri(thNames, toTest.inclusions, toTest.homonyms, toTest.aioli);
+      }
+      else {
+        // An array of candidates thesauri is given, we keep valid ones (those which are also available in the DB)
+        let thNames = res.map(t => t._key).filter(t => options.thesauri.indexOf(t) > -1);
+        loadAllThesauri(thNames, toTest.inclusions, toTest.homonyms, toTest.aioli);
+      }
+    }
+  )
 
 }
 
-function linkRegDescriptions(regs){
-  //console.log(terms[0])
 
-  regs.forEach(reg => {
+// List all possible pairs from an array
+let getPairs = (arr) => arr.map( (v, i) => arr.slice(i + 1).map(w => [v, w]) ).flat();
 
-    for (const [k, value] of Object.entries(reg.description)) {
-      //console.log(`${k}: ${value}`);
-      //console.log(value);
 
-      for(let key in terms){
-        //console.log(key);
-        let val = value.toString().replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase();
-        let voc = " " + terms[key][2] + " ";
-        voc = voc.replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase();
-        //console.log("VOC");
-        //console.log(voc);
-        //console.log(voc.replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase());
+/**
+ * This function load thesaurus concept (from a list of candidates thesauri) and execute semantic test functions.
+ * @param {Array} thNames an array of candidates thesaurus names (e.g ["th13", "th18"])
+ * @param {Boolean} [inclusions=false] whether or not look for semantic inclusions.
+ * @param {Boolean} [homonyms=false] whether or not look for homonyms.
+ * @param {Boolean} [aioli=false] whether or not look for thesaurus terms inside aioli annotations.
+ */
+async function loadAllThesauri(thNames, inclusions=false, homonyms=false, aioli=false){
 
-        if(voc.length > 3  && isNaN(voc) && val.indexOf(voc) > -1){
-          console.log(terms[key][2] + ' IS IN ' + value + " !!!");
-          console.log("\n");
-          console.log(" FROM " + `aioli_objects/${reg._key}` + " TO " + `${terms[key][0]}/${terms[key][1]}`);
+  let thCollecs = [];
+  for (let k=0; k<thNames.length; k++){
+    let cursor = await db.collection(thNames[k]).all();
+    let theso = await cursor.all();
+    thCollecs.push(theso);
 
-          semanticLinks.save({_from: `aioli_objects/${reg._key}`, _to: `${terms[key][0]}/${terms[key][1]}`, nature: 'vocabulary'}).then(
-            meta => console.log(meta),
-            err => console.error('Failed: ', err)
-          );
-        }
+    // if k is the last one
+    if(k == thNames.length - 1){
 
+      if(inclusions){
+        await testInclusions(thCollecs);
+      }
+      if(homonyms){
+        await testHomonymes(thCollecs);
+      }
+      if(aioli){
+        await testAiolidescriptions(thCollecs);
       }
 
     }
+  }
 
-  });
 }
 
-/*
-function findSemanticsInProjectsNames(){
-  db.query('FOR d IN aioli_objects FILTER d.type == "Project" RETURN d').then(
+/**
+ * This function test each concept of the input array to check if it is included in any of the other concepts label. Save all inclusions as relations in ArangoDB.
+ * @param {Array} thCollecs an array of concepts from one or more thesauri
+ */
+async function testInclusions(thCollecs){
+  let flatten = thCollecs.flat();
+  let totallength = flatten.length;
+  console.log(totallength); // nombre de concepts à tester
+
+  // INCLUSION
+  let conceptNames = flatten.map(c => c.name);
+  let inclusions = flatten.map((item, i) => {
+    let includedIn = flatten.map((c, index) => {
+
+      let nameA = item.name.replace(/[&\/\\#,+()$~%.:*?<>{}\[\]]/g, '');
+      let nameB = c.name.replace(/[&\/\\#,+()$~%.:*?<>{}\[\]]/g, '');
+
+      let regA = new RegExp('\\b' + nameA + '\\b');
+      let regB = new RegExp('\\b' + nameB + '\\b');
+
+      let found_AinB = regA.test(nameB);
+
+      if(found_AinB == true && conceptNames.indexOf(c.name) !== i && nameA.length > 3 && nameB.length > 3){
+        return c._id
+      }
+      else {
+        return null
+      }
+
+    });
+    return [item._id, includedIn];
+  });
+
+  let notnull = inclusions.map(z => ([z[0],z[1].filter(n => n !== null)]));
+  let relations = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances, type: 'related to', provenance: 'internal calculation'}))).flat();
+  console.log(relations);
+
+  const result = db.query({
+    query: `
+    FOR entry IN @toInsert INSERT entry INTO @@relationsColl RETURN 1
+    `,
+    bindVars: {
+      toInsert: relations,
+      "@relationsColl": config.collections.intraThesoRelations.name
+    }
+  }).then(
     cursor => cursor.all()
   ).then(
-    docs => linkProjectNames(docs),
-    err => console.error('Failed to execute query:', err)
-  );
+    res => console.log(res));
+
 }
 
-function linkProjectNames(projects){
-  projects.forEach(project => {
-    console.log(project.name);
+/**
+ * This function test each concept of the input array to check if it matches with any of the other concepts label. Save all homonyms as relations in ArangoDB.
+ * @param {Array} thCollecs an array of concepts from one or more thesauri
+ */
+async function testHomonymes(thCollecs){
+  let allConcepts = thCollecs.flat();
+  let totallength = allConcepts.length;
+  console.log(totallength); // nombre de concepts à tester
 
-      for(let key in terms){
-        // enlever tous les Espaces
-        // remplacer les accents par des lettres sans accent au lieu de les supprimer
-        let val = project.name.replace(/[^a-zA-Z0-9]/g, "");//.toLowerCase(); // je compare en étant case sensitive pour etre assez flex pour la nomenclature
-        let voc = terms[key][2];
-        voc = voc.replace(/[^a-zA-Z0-9]/g, "");//.toLowerCase();
+  // HOMONYMIE SUR LE MAIN LABEL
+  let conceptNames = allConcepts.map(c => c.name);
+  let duplicates = conceptNames.filter((item, index) => conceptNames.indexOf(item) !== index);
+  let indexOfAll = (arr, val) => arr.reduce((acc, el, i) => (el === val ? [...acc, i] : acc), []);
+  let duplicatesIndexes = duplicates.map(item => getPairs(indexOfAll(conceptNames, item).map(h => allConcepts[h]._id)).map(pair => ({_from: pair[0], _to: pair[1], type: "homonym", provenance: "internal calculation"})));
+  let relations = duplicatesIndexes.flat();
 
-        if(voc.length > 2 && isNaN(voc) && val.indexOf(voc) > -1){ //&& isNaN(voc)
-          console.log(terms[key][2] + ' IS IN ' + project.name + " !!!");
-          console.log("\n");
-          console.log(" FROM " + `aioli_objects/${project._key}` + " TO " + `${terms[key][0]}/${terms[key][1]}`);
+  var intraThesoRelations = db.collection(config.collections.intraThesoRelations.name);
+  const result = db.query({
+    query: `
+    FOR entry IN @toInsert INSERT entry INTO @@relationsColl RETURN 1
+    `,
+    bindVars: {
+      toInsert: relations,
+      "@relationsColl": config.collections.intraThesoRelations.name
+    }
+  }).then(
+    cursor => cursor.all()
+  ).then(
+    res => console.log(res));
 
-          // semanticLinks.save({_from: `aioli_objects/${reg._key}`, _to: `${terms[key][0]}/${terms[key][1]}`, nature: 'vocabulary'}).then(
-          //   meta => console.log(meta),
-          //   err => console.error('Failed: ', err)
-          // );
-        }
+}
 
-      }
+/**
+ * This function test each concept of the input array to check if it is included in any of the description of public aioli annotations. Save all matches as relations in ArangoDB.
+ * @param {Array} thCollecs an array of concepts from one or more thesauri
+ */
+async function testAiolidescriptions(thCollecs){
+  let allConcepts = thCollecs.flat();
+  let conceptNames = allConcepts.map(c => c.name);
+
+  var nounInflector = new natural.NounInflector();
+  var tokenizer = new natural.AggressiveTokenizerFr();
+
+  // tokenize each concept, remove stopwords (de, et, la, ...), singularize and then reconstruct the string
+  // we'll do the same to the aioli descriptions and then we can compare them
+  let stemmedConceptNames = conceptNames.map(c => {
+    let tokenized = tokenizer.tokenize(c);
+    let result = tokenized.filter(token =>
+      stopwords.words.indexOf(token) === -1
+    );
+    let sing = result.map(token => nounInflector.singularize(token));
+    let finalString = sing.join(" ");
+    return finalString;
   });
+  console.log(stemmedConceptNames);
+
+  var aioliObjects = db.collection("aioli_objects"); // To do : replace with the name from config.js ?
+  let listAioliObjects = aioliObjects.all().then(
+    cursor => cursor.all()
+  ).then(
+    res => {
+      let regions = res.filter(doc => doc.type == "Region" && Object.keys(doc.description).length > 0)
+      let descriptions = regions.map(reg => ({[reg._id]: reg.description}));
+      let descriptionStrings = descriptions.map(d => ({[Object.keys(d)[0]]: JSON.stringify(Object.values(d))}) );
+
+      let cleanedDescriptions = descriptionStrings.map(item => {
+
+        for (const [key, value] of Object.entries(item)) {
+          let tokenized = tokenizer.tokenize(value);
+          let result = tokenized.filter(token =>
+            stopwords.words.indexOf(token) === -1
+          );
+          let sing = result.map(token => nounInflector.singularize(token));
+          let finalString = sing.join(" ");
+          return ({[key]: finalString})
+        }
+      })
+
+      let matches = stemmedConceptNames.map((concept, i) => {
+        let tmp = cleanedDescriptions.filter(d => Object.values(d)[0].indexOf(" " + concept + " ") > -1 && isNaN(concept) == true && concept.length > 2).map(match => {
+          console.log(conceptNames[i] + " FOUND IN " + Object.values(match)[0] + "\n");
+
+          let ambiguities = ["cours", "cadre", "niveau", "place"]; // to be improved: define a list of lexical ambiguities to assign a confidence score to the match?
+          let ambiguity = false;
+          if(ambiguities.indexOf(allConcepts[i].name) > -1){
+            ambiguity = true; // undefined, weak, medium, strong ? Quantify ambiguities ?
+          }
+          let relation = {_from: allConcepts[i]._id, _to: Object.keys(match)[0], type: "vocabulary", provenance: {method: "internal calculation", timestamp: Date.now(), script: "SemanticLinker", function: "testAiolidescriptions", ambiguity: true}};
+          return relation;
+        })
+        return tmp;
+      });
+
+      let relations = matches.filter(entry => entry.length > 0).flat();
+      console.log(relations);
+
+      // To do : replace with the collection name from config.js ?
+      const result = db.query({
+        query: `
+        FOR entry IN @toInsert INSERT entry INTO SemanticLinks RETURN 1
+        `,
+        bindVars: {
+          toInsert: relations,
+        }
+      }).then(
+        cursor => cursor.all()
+      ).then(
+        res => console.log(res));
+
+    }
+  )
 }
-*/
