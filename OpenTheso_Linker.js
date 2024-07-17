@@ -170,30 +170,18 @@ async function testInclusions(thCollecs){
   let relations = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances, type: 'related to', provenance: 'internal calculation'}))).flat();
   console.log(relations);
 
-  var intraThesoRelations = db.collection(config.collections.intraThesoRelations.name);
   const result = db.query({
     query: `
-    FOR entry IN @toInsert INSERT entry INTO @@relationsColl RETURN true
+    FOR entry IN @toInsert INSERT entry INTO @@relationsColl RETURN 1
     `,
     bindVars: {
       toInsert: relations,
-      relationsColl: intraThesoRelations
+      "@relationsColl": config.collections.intraThesoRelations.name
     }
   }).then(
     cursor => cursor.all()
   ).then(
     res => console.log(res));
-  // const result = db.query({
-  //   query: `
-  //   FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
-  //   `,
-  //   bindVars: {
-  //     toInsert: relations,
-  //   }
-  // }).then(
-  //   cursor => cursor.all()
-  // ).then(
-  //   res => console.log(res));
 
 }
 
@@ -220,23 +208,12 @@ async function testHomonymes(thCollecs){
     `,
     bindVars: {
       toInsert: relations,
-      relationsColl: intraThesoRelations
+      "@relationsColl": config.collections.intraThesoRelations.name
     }
   }).then(
     cursor => cursor.all()
   ).then(
     res => console.log(res));
-  // const result = db.query({
-  //   query: `
-  //   FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
-  //   `,
-  //   bindVars: {
-  //     toInsert: relations,
-  //   }
-  // }).then(
-  //   cursor => cursor.all()
-  // ).then(
-  //   res => console.log(res));
 
 }
 
@@ -264,7 +241,7 @@ async function testAiolidescriptions(thCollecs){
   });
   console.log(stemmedConceptNames);
 
-  var aioliObjects = db.collection(config.collections.aioliObjects.name); // db.collection("aioli_objects");
+  var aioliObjects = db.collection("aioli_objects"); // To do : replace with the name from config.js ?
   let listAioliObjects = aioliObjects.all().then(
     cursor => cursor.all()
   ).then(
@@ -304,31 +281,18 @@ async function testAiolidescriptions(thCollecs){
       let relations = matches.filter(entry => entry.length > 0).flat();
       console.log(relations);
 
-      var semanticLinks = db.collection(config.collections.semanticLinks.name);
+      // To do : replace with the collection name from config.js ?
       const result = db.query({
         query: `
-        FOR entry IN @toInsert INSERT entry INTO @@semanticLinksColl RETURN 1
+        FOR entry IN @toInsert INSERT entry INTO SemanticLinks RETURN 1
         `,
         bindVars: {
           toInsert: relations,
-          semanticLinksColl: semanticLinks,
         }
       }).then(
         cursor => cursor.all()
       ).then(
         res => console.log(res));
-
-      // const result = db.query({
-      //   query: `
-      //   FOR entry IN @toInsert INSERT entry INTO SemanticLinks RETURN 1
-      //   `,
-      //   bindVars: {
-      //     toInsert: relations,
-      //   }
-      // }).then(
-      //   cursor => cursor.all()
-      // ).then(
-      //   res => console.log(res));
 
     }
   )
