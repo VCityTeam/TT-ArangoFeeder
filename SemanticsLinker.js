@@ -43,7 +43,7 @@ const optionDefinitions = [
   {
     name: 'thesauri',
     multiple: true,
-    description: 'Provide a list of thesauri to be tested (default: all). NOTE: Not yet operational !'
+    description: 'Provide a list of thesauri to be tested (default: all).'
   }
 ]
 const options = commandLineArgs(optionDefinitions);

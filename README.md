@@ -19,10 +19,10 @@ edit the `dbaccess.js` in order to provide the required credentials
 (note: by default the `login` is `root`.
 
 Then create a database named out of the `database` entry you chose to provide
-within the `dbaccess.js` file by 
+within the `dbaccess.js` file by
 * using the builtin Arangodb UI by opening `http://127.0.0.1:8529` with your
   favorite webbrowser,
-* identifying and 
+* identifying and
 * using the `DATABASES` tab of the dashboard.
 
 ### Uploading content to the database
@@ -34,11 +34,11 @@ node PrepareDB.js
 node OpenTheso_Synchronizer.js
 node Aioli_Synchronizer.js
 node rcc8_Synchronizer.js
-node SemanticsLinker.js
+node SemanticsLinker.js --inclusions --homonyms --aioli
 ```
 
 ### Gracefully halting the database
-Refer to 
+Refer to
 [this stackoverflow thread](https://stackoverflow.com/questions/31627932/how-to-stop-and-start-arangodb-server-in-arangodb-docker-container)
 but the method boils down to
 - using the ArangoDB web interface select the support option from the left
