@@ -1,5 +1,3 @@
-//const http = require('http');
-//const https = require('https');
 const url = require('url');
 const fs = require('fs');
 const arangojs = require('arangojs');
@@ -68,7 +66,6 @@ if(options.help || (!options.inclusions && !options.homonyms && !options.aioli))
   console.log(usage);
 }
 else{
-  console.log(options);
   let toTest = {
     inclusions: options.inclusions ? true : false,
     homonyms: options.homonyms ? true : false,
@@ -77,7 +74,6 @@ else{
   console.log(toTest);
 
   var thesauri = db.collection("Thesauri");
-  var intraThesoRelations = db.collection(config.collections.intraThesoRelations.name);
 
   // dans tous les cas on doit recuperer la liste des thesauri disponibles
   let listThesauri = thesauri.all().then(
@@ -94,33 +90,24 @@ else{
         let thNames = res.map(t => t._key).filter(t => options.thesauri.indexOf(t) > -1);
         loadAllThesauri(thNames, toTest.inclusions, toTest.homonyms, toTest.aioli);
       }
-
     }
   )
-
 
 }
 
 
-//db._connection._agentOptions.maxSockets = 8;
-
-
-// var thesauri = db.collection("Thesauri");
-// var intraThesoRelations = db.collection(config.collections.intraThesoRelations.name);
-
-// let listThesauri = thesauri.all().then(
-//   cursor => cursor.all()
-// ).then(
-//   res => {
-//     loadAllThesauri(res);
-//   }
-// )
-
-// Liste les paires possibles à partir d'un array
+// List all possible pairs from an array
 let getPairs = (arr) => arr.map( (v, i) => arr.slice(i + 1).map(w => [v, w]) ).flat();
 
+
+/**
+ * This function load thesaurus concept (from a list of candidates thesauri) and execute semantic test functions.
+ * @param {Array} thNames an array of candidates thesaurus names (e.g ["th13", "th18"])
+ * @param {Boolean} [inclusions=false] whether or not look for semantic inclusions.
+ * @param {Boolean} [homonyms=false] whether or not look for homonyms.
+ * @param {Boolean} [aioli=false] whether or not look for thesaurus terms inside aioli annotations.
+ */
 async function loadAllThesauri(thNames, inclusions=false, homonyms=false, aioli=false){
-  //let thNames = thesauri.map(t => t._key);
 
   let thCollecs = [];
   for (let k=0; k<thNames.length; k++){
@@ -140,14 +127,16 @@ async function loadAllThesauri(thNames, inclusions=false, homonyms=false, aioli=
       if(aioli){
         await testAiolidescriptions(thCollecs);
       }
-     //testInclusions(thCollecs);
-     //testHomonymes(thCollecs);
-     //testAiolidescriptions(thCollecs);
+
     }
   }
 
 }
 
+/**
+ * This function test each concept of the input array to check if it is included in any of the other concepts label. Save all inclusions as relations in ArangoDB.
+ * @param {Array} thCollecs an array of concepts from one or more thesauri
+ */
 async function testInclusions(thCollecs){
   let flatten = thCollecs.flat();
   let totallength = flatten.length;
@@ -181,20 +170,37 @@ async function testInclusions(thCollecs){
   let relations = notnull.map(d => d[1].map(correspondances => ({_from: d[0], _to: correspondances, type: 'related to', provenance: 'internal calculation'}))).flat();
   console.log(relations);
 
+  var intraThesoRelations = db.collection(config.collections.intraThesoRelations.name);
   const result = db.query({
     query: `
-    FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
+    FOR entry IN @toInsert INSERT entry INTO @@relationsColl RETURN true
     `,
     bindVars: {
       toInsert: relations,
+      relationsColl: intraThesoRelations
     }
   }).then(
     cursor => cursor.all()
   ).then(
     res => console.log(res));
+  // const result = db.query({
+  //   query: `
+  //   FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
+  //   `,
+  //   bindVars: {
+  //     toInsert: relations,
+  //   }
+  // }).then(
+  //   cursor => cursor.all()
+  // ).then(
+  //   res => console.log(res));
 
 }
 
+/**
+ * This function test each concept of the input array to check if it matches with any of the other concepts label. Save all homonyms as relations in ArangoDB.
+ * @param {Array} thCollecs an array of concepts from one or more thesauri
+ */
 async function testHomonymes(thCollecs){
   let allConcepts = thCollecs.flat();
   let totallength = allConcepts.length;
@@ -207,21 +213,37 @@ async function testHomonymes(thCollecs){
   let duplicatesIndexes = duplicates.map(item => getPairs(indexOfAll(conceptNames, item).map(h => allConcepts[h]._id)).map(pair => ({_from: pair[0], _to: pair[1], type: "homonym", provenance: "internal calculation"})));
   let relations = duplicatesIndexes.flat();
 
+  var intraThesoRelations = db.collection(config.collections.intraThesoRelations.name);
   const result = db.query({
     query: `
-    FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
+    FOR entry IN @toInsert INSERT entry INTO @@relationsColl RETURN 1
     `,
     bindVars: {
       toInsert: relations,
+      relationsColl: intraThesoRelations
     }
   }).then(
     cursor => cursor.all()
   ).then(
     res => console.log(res));
-
+  // const result = db.query({
+  //   query: `
+  //   FOR entry IN @toInsert INSERT entry INTO intraTheso_relations RETURN 1
+  //   `,
+  //   bindVars: {
+  //     toInsert: relations,
+  //   }
+  // }).then(
+  //   cursor => cursor.all()
+  // ).then(
+  //   res => console.log(res));
 
 }
 
+/**
+ * This function test each concept of the input array to check if it is included in any of the description of public aioli annotations. Save all matches as relations in ArangoDB.
+ * @param {Array} thCollecs an array of concepts from one or more thesauri
+ */
 async function testAiolidescriptions(thCollecs){
   let allConcepts = thCollecs.flat();
   let conceptNames = allConcepts.map(c => c.name);
@@ -229,8 +251,8 @@ async function testAiolidescriptions(thCollecs){
   var nounInflector = new natural.NounInflector();
   var tokenizer = new natural.AggressiveTokenizerFr();
 
-  // on tokenise chaque concept, on supprime les stopwords (de, et, la, ...), on singularise et ensuite en reconstruit la string
-  // on fera subir le meme traitement aux descriptions aioli et ensuite on pourra comparer
+  // tokenize each concept, remove stopwords (de, et, la, ...), singularize and then reconstruct the string
+  // we'll do the same to the aioli descriptions and then we can compare them
   let stemmedConceptNames = conceptNames.map(c => {
     let tokenized = tokenizer.tokenize(c);
     let result = tokenized.filter(token =>
@@ -242,7 +264,7 @@ async function testAiolidescriptions(thCollecs){
   });
   console.log(stemmedConceptNames);
 
-  var aioliObjects = db.collection("aioli_objects");
+  var aioliObjects = db.collection(config.collections.aioliObjects.name); // db.collection("aioli_objects");
   let listAioliObjects = aioliObjects.all().then(
     cursor => cursor.all()
   ).then(
@@ -268,10 +290,10 @@ async function testAiolidescriptions(thCollecs){
         let tmp = cleanedDescriptions.filter(d => Object.values(d)[0].indexOf(" " + concept + " ") > -1 && isNaN(concept) == true && concept.length > 2).map(match => {
           console.log(conceptNames[i] + " FOUND IN " + Object.values(match)[0] + "\n");
 
-          let ambiguities = ["cours", "cadre", "niveau", "place"]; // a améliorer : définir un liste d'ambiguités lexicales pour attribuer un score de confiance au match ?
+          let ambiguities = ["cours", "cadre", "niveau", "place"]; // to be improved: define a list of lexical ambiguities to assign a confidence score to the match?
           let ambiguity = false;
           if(ambiguities.indexOf(allConcepts[i].name) > -1){
-            ambiguity = true; // undefined, weak, medium, strong ?
+            ambiguity = true; // undefined, weak, medium, strong ? Quantify ambiguities ?
           }
           let relation = {_from: allConcepts[i]._id, _to: Object.keys(match)[0], type: "vocabulary", provenance: {method: "internal calculation", timestamp: Date.now(), script: "SemanticLinker", function: "testAiolidescriptions", ambiguity: true}};
           return relation;
@@ -282,17 +304,31 @@ async function testAiolidescriptions(thCollecs){
       let relations = matches.filter(entry => entry.length > 0).flat();
       console.log(relations);
 
+      var semanticLinks = db.collection(config.collections.semanticLinks.name);
       const result = db.query({
         query: `
-        FOR entry IN @toInsert INSERT entry INTO SemanticLinks RETURN 1
+        FOR entry IN @toInsert INSERT entry INTO @@semanticLinksColl RETURN 1
         `,
         bindVars: {
           toInsert: relations,
+          semanticLinksColl: semanticLinks,
         }
       }).then(
         cursor => cursor.all()
       ).then(
         res => console.log(res));
+
+      // const result = db.query({
+      //   query: `
+      //   FOR entry IN @toInsert INSERT entry INTO SemanticLinks RETURN 1
+      //   `,
+      //   bindVars: {
+      //     toInsert: relations,
+      //   }
+      // }).then(
+      //   cursor => cursor.all()
+      // ).then(
+      //   res => console.log(res));
 
     }
   )
