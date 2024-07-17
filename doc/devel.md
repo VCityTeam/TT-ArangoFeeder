@@ -1,7 +1,7 @@
 ## Examples of ArangoDB queries with AQL
 
 
-#### Find in Aioli
+### Find in Aioli
 
 Get all Aioli annotations whose description contains the word "nef"
 
@@ -17,7 +17,7 @@ FOR a IN aioli_objects
         RETURN { field: d, val: a.description[d]}
 ```
 
-#### Find homonyms
+### Find homonyms
 
 Find homonyms including the altLabels of each concept
 
@@ -42,7 +42,7 @@ FOR a IN th56
             }
 ```
 
-#### Find semantic inclusions
+### Find semantic inclusions
 
 Find relations like "A inside B" (e.g. "arc" inside "arc doubleau"), excluding short words and digits
 
@@ -76,7 +76,7 @@ FOR a IN th56
         FILTER LENGTH(item) > 0
 ```
 
-#### Export Aioli
+### Export Aioli
 
 Get all aioli nodes and all aioli relations and return it JSON formatted
 
