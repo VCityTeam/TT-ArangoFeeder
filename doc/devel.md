@@ -74,7 +74,7 @@ FOR a IN th56
 
     FOR item IN total
         FILTER LENGTH(item) > 0
-        RETURN item
+            RETURN item
 ```
 
 ### Export Aioli
