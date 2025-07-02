@@ -74,6 +74,7 @@ FOR a IN th56
 
     FOR item IN total
         FILTER LENGTH(item) > 0
+        RETURN item
 ```
 
 ### Export Aioli
@@ -101,3 +102,12 @@ LET LINKS = (
 
 RETURN {nodes: NODES, links: LINKS}
 ```
+
+### Questions (on annotations)
+
+* What are the annotations of the nave that concerns the replaced objects ?
+(E.g. pierre altérée à remplacer)
+
+* What are the most common alterations?
+
+* Where do we find the moisture content ?
